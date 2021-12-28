@@ -57,7 +57,7 @@ for extension in "${extensions[@]}"
 do
         find "$folder_todo" -regex ".*$extension" | while read file_path; do
                 file_name="$(basename "$file_path")"
-                output_folder="$folder_complete/$(basename $(dirname $file_path))"
+                output_folder="$folder_complete$(sed 's!'$folder_todo'!!g' <<< $(dirname "$file_path"))"
 
                 if [[ ! -d "$output_folder" ]]; then # Ensure Output Folder Exists
                         mkdir "$output_folder"
@@ -78,7 +78,7 @@ do
                 echo "Completed Conversion of $file_path"
 
                 mv "$(dirname $file_path)" "$folder_original_files"
-                echo "Moved \"$(dirname $file_path)\" to \"$folder_original_files\""
+                echo "Moved \"$(dirname "$file_path")\" to \"$folder_original_files\""
         done
 done
 
