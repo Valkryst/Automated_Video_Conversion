@@ -16,13 +16,12 @@ touch "$lockfile"
 # Ensure Required Folders Exist
 folder_todo="$(pwd)/todo"
 folder_complete="$(pwd)/complete"
-folder_original_files="$(pwd)/complete/original_files"
 
-folders=( "$folder_todo" "$folder_complete" "$folder_original_files" )
+folders=( "$folder_todo" "$folder_complete" )
 for folder_path in "${folders[@]}"
 do
         if [[ ! -d "$folder_path" ]]; then
-                mkdir "$folder_path"
+                mkdir -p "$folder_path"
                 echo "Created $folder_path"
         fi
 done
@@ -39,7 +38,7 @@ do
         done
 done
 
-unnecessary_file_patterns=( ".*\.nfo" ".*\.txt" )
+unnecessary_file_patterns=( ".*\.exe" ".*\.nfo" ".*\.txt" ".*\.jpg" ".*\.jpeg" ".*\.png")
 for pattern in "${unnecessary_file_patterns[@]}"
 do
         find "$folder_todo" -type f -regex "$pattern" | while read file_path; do
@@ -60,7 +59,7 @@ do
                 output_folder="$folder_complete$(sed 's!'$folder_todo'!!g' <<< $(dirname "$file_path"))"
 
                 if [[ ! -d "$output_folder" ]]; then # Ensure Output Folder Exists
-                        mkdir "$output_folder"
+                        mkdir -p "$output_folder"
                         echo "Created $output_folder"
                 fi
 
@@ -77,10 +76,36 @@ do
                         "$output_folder/$file_name.mkv" -y
                 echo "Completed Conversion of $file_path"
 
-                mv "$(dirname $file_path)" "$folder_original_files"
-                echo "Moved \"$(dirname "$file_path")\" to \"$folder_original_files\""
+                rm "$file_path"
+                echo -e "Deleted $file_path\n"
         done
 done
+
+
+
+# Move subtitles
+extensions=( "ass" "srt" )
+
+for extension in "${extensions[@]}"
+do
+        find "$folder_todo" -regex ".*$extension" | while read file_path; do
+                file_name="$(basename "$file_path")"
+                output_folder="$folder_complete$(sed 's!'$folder_todo'!!g' <<< $(dirname "$file_path"))"
+
+                if [[ ! -d "$output_folder" ]]; then # Ensure Output Folder Exists
+                        mkdir -p "$output_folder"
+                        echo "Created $output_folder"
+                fi
+
+                mv "$file_path" "$output_folder"
+                echo -e "Moved $file_path to $output_folder\n"
+        done
+done
+
+
+
+# Delete empty folders.
+find "$folder_todo" -type d -empty -delete
 
 
 
