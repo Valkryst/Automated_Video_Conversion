@@ -40,12 +40,12 @@ With the script downloaded, you must then perform these steps:
 
 ## Usage
 
-Place files and folders in the `todo` folder and they will be converted by the cron job. You'll know a file has been completed, if the original file has been moved to `completed/original_files`.
-
-After verifying that the converted file is as you expect, you can delete the original file from `completed/original_files`.
+Place files and folders in the `todo` folder and they will be converted by the cron job.
 
 ## Important Notes
 
 * Any folders containing the word `sample` are deleted, along with all files within those folders.
 
-* Any files ending in `.nfo` or `.txt` are deleted.
+* Any files ending in `.exe`, `.jpg`, `.jpeg`, `.png`, `.nfo` or `.txt` are deleted.
+
+* Dolby Vision and HDR files are not supported.
